@@ -1,0 +1,51 @@
+{
+  "name": "Session",
+  "type": "object",
+  "properties": {
+    "sellerId": {
+      "type": "string"
+    },
+    "sellerName": {
+      "type": "string"
+    },
+    "sellerCashTag": {
+      "type": "string"
+    },
+    "platform": {
+      "type": "string",
+      "enum": ["Golden Dragon", "Diamond Dragon", "Fire Phoenix", "Magic City", "Other"]
+    },
+    "totalBuyIn": {
+      "type": "number",
+      "description": "Total buy-in amount for the session in USD"
+    },
+    "markup": {
+      "type": "number",
+      "default": 1.0,
+      "description": "Markup multiplier (e.g. 1.1 for 10% markup)"
+    },
+    "availableShares": {
+      "type": "number",
+      "default": 100,
+      "description": "Percentage of the session still available to buy (0-100)"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["funding", "active", "completed", "cancelled"],
+      "default": "funding"
+    },
+    "cashOut": {
+      "type": "number",
+      "description": "Total amount cashed out after session completes"
+    },
+    "profit": {
+      "type": "number",
+      "description": "Net profit (cashOut - totalBuyIn)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Session rules or notes"
+    }
+  },
+  "required": ["sellerId", "platform", "totalBuyIn"]
+}

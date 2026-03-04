@@ -1,0 +1,34 @@
+{
+  "name": "Payout",
+  "type": "object",
+  "properties": {
+    "sessionId": {
+      "type": "string"
+    },
+    "stakeId": {
+      "type": "string"
+    },
+    "buyerId": {
+      "type": "string"
+    },
+    "buyerName": {
+      "type": "string"
+    },
+    "buyerCashTag": {
+      "type": "string"
+    },
+    "sellerId": {
+      "type": "string"
+    },
+    "amountOwed": {
+      "type": "number",
+      "description": "Amount owed to the buyer based on their percentage and the final cashout"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "paid"],
+      "default": "pending"
+    }
+  },
+  "required": ["sessionId", "stakeId", "amountOwed"]
+}

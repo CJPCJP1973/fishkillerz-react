@@ -1,0 +1,32 @@
+{
+  "name": "Stake",
+  "type": "object",
+  "properties": {
+    "sessionId": {
+      "type": "string"
+    },
+    "buyerId": {
+      "type": "string"
+    },
+    "buyerName": {
+      "type": "string"
+    },
+    "buyerCashTag": {
+      "type": "string"
+    },
+    "percentage": {
+      "type": "number",
+      "description": "Percentage of the session purchased (e.g. 10)"
+    },
+    "amountPaid": {
+      "type": "number",
+      "description": "Total amount paid for this stake including markup"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "confirmed", "cancelled"],
+      "default": "pending"
+    }
+  },
+  "required": ["sessionId", "buyerId", "percentage", "amountPaid"]
+}

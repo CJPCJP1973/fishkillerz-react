@@ -1,0 +1,35 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "cashTag": {
+      "type": "string",
+      "description": "User's Cash App tag for payments and receiving payouts"
+    },
+    "isSubscribed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the user has an active $1.99 subscription"
+    },
+    "subscriptionStatus": {
+      "type": "string",
+      "enum": ["inactive", "pending", "active"],
+      "default": "inactive"
+    },
+    "totalProfit": {
+      "type": "number",
+      "default": 0,
+      "description": "Total profit generated as a seller"
+    },
+    "totalBuyIn": {
+      "type": "number",
+      "default": 0,
+      "description": "Total buy-in volume to calculate win percentage"
+    },
+    "winPercentage": {
+      "type": "number",
+      "default": 0,
+      "description": "Win percentage of the user as a seller"
+    }
+  }
+}

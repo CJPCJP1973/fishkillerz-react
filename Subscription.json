@@ -1,0 +1,25 @@
+{
+  "name": "Subscription",
+  "type": "object",
+  "properties": {
+    "userId": {
+      "type": "string"
+    },
+    "userName": {
+      "type": "string"
+    },
+    "cashTag": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number",
+      "default": 1.99
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "active", "rejected"],
+      "default": "pending"
+    }
+  },
+  "required": ["userId", "cashTag"]
+}
