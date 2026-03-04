@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { DollarSign, AlertCircle } from 'lucide-react';
 import {
   Drawer,
@@ -24,6 +25,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { createTransaction } from '@/services/transactions.service';
 
 interface StakeModalProps {
   sessionId: string;
@@ -77,28 +79,41 @@ export function StakeModal({ sessionId, totalBuyIn, onStakeSuccess }: StakeModal
         return;
       }
 
-      // TODO: Call API to create transaction
-      // Example: await createTransaction({
-      //   sessionId,
-      //   userId: currentUser.id,
-      //   amount: data.amount,
-      //   status: 'Pending Admin Confirmation',
-      //   paymentMethod: data.paymentMethod,
-      //   paymentUsername: data.paymentUsername,
-      // });
+      // Get current user ID from auth store
+      // TODO: Import and use useAuthStore
+      // const { user } = useAuthStore();
+      const userId = ''; // TODO: Replace with actual user ID from auth store
 
-      console.log('Creating transaction:', {
+      if (!userId) {
+        setError('Unable to create stake: user not authenticated');
+        return;
+      }
+
+      // Call API to create transaction
+      const transaction = await createTransaction({
         sessionId,
-        ...data,
-        status: 'Pending Admin Confirmation',
+        userId,
+        amount: data.amount,
+        paymentMethod: data.paymentMethod,
+        paymentUsername: data.paymentUsername,
       });
 
-      // Show success and close
+      // Show success message
+      toast.success(
+        `Stake created successfully! Waiting for admin confirmation.`,
+        {
+          description: `Amount: $${data.amount.toFixed(2)} • Status: Pending Admin Confirmation`,
+        }
+      );
+
+      // Close and reset
       setIsOpen(false);
       form.reset();
       onStakeSuccess?.();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create stake');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create stake';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 import {
   CheckCircle,
   XCircle,
@@ -29,6 +30,7 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
+import { confirmTransaction, rejectTransaction } from '@/services/transactions.service';
 
 interface PendingStake {
   id: string;
@@ -89,7 +91,7 @@ const mockPendingStakes: PendingStake[] = [
   },
 ];
 
-function StakeDetailsDrawer({ stake }: { stake: PendingStake }) {
+function StakeDetailsDrawer({ stake, onActionComplete }: { stake: PendingStake; onActionComplete?: () => void }) {
   const [isConfirming, setIsConfirming] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [isRejecting, setIsRejecting] = useState(false);
@@ -97,9 +99,30 @@ function StakeDetailsDrawer({ stake }: { stake: PendingStake }) {
   const handleConfirm = async () => {
     setIsConfirming(true);
     try {
-      // TODO: Call API to confirm transaction
-      // await confirmTransaction(stake.id);
-      console.log('Confirming stake:', stake.id);
+      // Call API to confirm transaction
+      // Note: You'll need to get the current admin's ID from your auth store
+      const adminId = ''; // TODO: Get from auth store: useAuthStore().user?.id
+
+      if (!adminId) {
+        toast.error('Unable to confirm: admin ID not found');
+        return;
+      }
+
+      await confirmTransaction({
+        transactionId: stake.id,
+        adminId,
+      });
+
+      toast.success(`Stake confirmed! Amount: $${stake.amount.toFixed(2)}`);
+      onActionComplete?.();
+
+      // Close the drawer
+      const closeButton = document.querySelector('[data-drawer-close]') as HTMLButtonElement;
+      closeButton?.click();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to confirm stake';
+      toast.error(errorMessage);
+      console.error('Error confirming stake:', error);
     } finally {
       setIsConfirming(false);
     }
@@ -107,15 +130,37 @@ function StakeDetailsDrawer({ stake }: { stake: PendingStake }) {
 
   const handleReject = async () => {
     if (!rejectionReason.trim()) {
-      alert('Please provide a rejection reason');
+      toast.error('Please provide a rejection reason');
       return;
     }
 
     setIsRejecting(true);
     try {
-      // TODO: Call API to reject transaction
-      // await rejectTransaction(stake.id, rejectionReason);
-      console.log('Rejecting stake:', stake.id, 'Reason:', rejectionReason);
+      // Call API to reject transaction
+      // Note: You'll need to get the current admin's ID from your auth store
+      const adminId = ''; // TODO: Get from auth store: useAuthStore().user?.id
+
+      if (!adminId) {
+        toast.error('Unable to reject: admin ID not found');
+        return;
+      }
+
+      await rejectTransaction({
+        transactionId: stake.id,
+        adminId,
+        rejectionReason,
+      });
+
+      toast.success('Stake rejected successfully');
+      onActionComplete?.();
+
+      // Close the drawer
+      const closeButton = document.querySelector('[data-drawer-close]') as HTMLButtonElement;
+      closeButton?.click();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to reject stake';
+      toast.error(errorMessage);
+      console.error('Error rejecting stake:', error);
     } finally {
       setIsRejecting(false);
     }
@@ -349,7 +394,13 @@ export function PendingStakesAdmin({
                 </Badge>
               </TableCell>
               <TableCell className="text-right">
-                <StakeDetailsDrawer stake={stake} />
+                <StakeDetailsDrawer
+                  stake={stake}
+                  onActionComplete={onConfirm || onReject ? () => {
+                    // Trigger refresh of the stakes list
+                    window.location.reload();
+                  } : undefined}
+                />
               </TableCell>
             </TableRow>
           ))}

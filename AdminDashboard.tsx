@@ -14,6 +14,7 @@ import {
   XCircle,
   Search,
   Filter,
+  AlertCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,6 +29,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useAuthStore, usePlayerStore } from '@/store';
+import { PendingStakesAdmin } from '@/components/ui/PendingStakesAdmin';
 
 // Mock admin data
 const mockUsers = [
@@ -124,6 +126,13 @@ export function AdminDashboard() {
             >
               <BarChart3 className="w-4 h-4 mr-2" />
               Overview
+            </TabsTrigger>
+            <TabsTrigger
+              value="pending-stakes"
+              className="flex-1 data-[state=active]:bg-[#00ff88] data-[state=active]:text-black"
+            >
+              <AlertCircle className="w-4 h-4 mr-2" />
+              Pending Stakes
             </TabsTrigger>
             <TabsTrigger
               value="users"
@@ -231,6 +240,11 @@ export function AdminDashboard() {
                 </div>
               </div>
             </div>
+          </TabsContent>
+
+          {/* Pending Stakes Tab */}
+          <TabsContent value="pending-stakes">
+            <PendingStakesAdmin />
           </TabsContent>
 
           {/* Users Tab */}
